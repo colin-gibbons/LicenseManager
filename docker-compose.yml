@@ -1,0 +1,14 @@
+version: "3.6"
+services:
+  web:
+    image: colingibbons/flask
+    ports:
+      - "80:5000"
+    networks:
+      - webnet
+  redis:
+    image: redis
+    networks:
+      - webnet
+networks:
+  webnet:
