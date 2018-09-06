@@ -36,7 +36,6 @@ def home():
 def search():
     string = request.args.get('query')
 
-    print(string)
     """     r = redis.StrictRedis(host=redis_ip, port=redis_port, db=0)
     out = r.get(string)
     error = 'none'
@@ -48,8 +47,11 @@ def search():
         error = 'Key does not exist.1'
     """
     #return jsonify({'input':out, 'output':out, 'error': error})
-    print(test_dataset[string])
-    return jsonify(test_dataset[string])
+
+    if string in test_dataset:
+        return jsonify(test_dataset.get(string))
+    else: 
+        return render_template('noResultsFound.html', name=string)
 
 @app.route('/search<string:string>', methods=['GET']) # search database
 def retrieve(string):

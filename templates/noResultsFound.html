@@ -8,19 +8,16 @@
     <h2>
         No Results Found
     </h2>
-
-    <p>Search again:</p>
+    <br/>
+    <form action="/kv-record/{{ name }}" method="get">
+        <button type="submit">Create new User "{{ name }}"?</button>
+    </form>
+    <br/>
+    <p>Or, Search again:</p>
     <form action="/search" method="get" target="_blank">
       <input type="text" name="query">
       <input type="submit" value="Search">
     </form>
 
-    <p>Or, Add User "NAME":</p>
-    <br/>
-    <form action="/kv-record" method="post">
-      First name: <input type="text" name="fname"><br>
-      Last name: <input type="text" name="lname"><br>
-      <input type="submit" value="Submit">
-    </form>
 </body>
 </html>
