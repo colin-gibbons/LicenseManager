@@ -53,20 +53,6 @@ def search():
     else: 
         return render_template('noResultsFound.html', name=string)
 
-@app.route('/search<string:string>', methods=['GET']) # search database
-def retrieve(string):
-    r = redis.StrictRedis(host=redis_ip, port=redis_port, db=0)
-    out = r.get(string)
-    error = 'none'
-
-    if type(out) == bytes:
-        out = out.decode("utf-8")
-    else:
-        out = False
-        error = 'Key does not exist.2'
-
-    return jsonify({'input':string, 'output':out, 'error': error})
-
 @app.route('/kv-record', methods=['POST', 'PUT']) # kv record
 def record():
     data = request.form
