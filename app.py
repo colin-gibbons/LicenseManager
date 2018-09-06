@@ -11,6 +11,8 @@ app = Flask(__name__)
 redis_ip = '35.229.39.79' #'redis'
 redis_port = 6379
 
+test_dataset = {"Colin Gibbons": {"Software":{"Adobe Acrobat": "2017", "Stata": "license info"}}, "Caleb Edens":{"Software":{"Matlab":2018,"Rainbow 6 Seige":"Copper 3 lol"}}}
+
 tasks = [ # list of available API commands
     {
         'id':'kv-record',
@@ -30,26 +32,12 @@ tasks = [ # list of available API commands
 def home():
     return render_template('index.html')
 
-@app.errorhandler(404) # handles 404 errors
-def notFound(error):
-    return make_response(jsonify({'error': '404: Page not found.'}), 404)
+@app.route('/search', methods=['GET']) # search database
+def search():
+    string = request.args.get('query')
 
-@app.route('/tasks', methods=['GET']) # displays list of available API commands
-def get_tasks():
-    return jsonify({'tasks': tasks})
-
-@app.route('/<string:taskID>', methods=['GET'])  # returns info on a specific command
-def getTask(taskID):
-    task = [task for task in tasks if task['id'] == taskID]
-    
-    if len(task) == 0:
-        abort(404)
-    
-    return jsonify({'task':task[0]})
-
-@app.route('/search?query=<string:string>', methods=['GET']) # search database
-def search(string):
-    r = redis.StrictRedis(host=redis_ip, port=redis_port, db=0)
+    print(string)
+    """     r = redis.StrictRedis(host=redis_ip, port=redis_port, db=0)
     out = r.get(string)
     error = 'none'
 
@@ -58,10 +46,12 @@ def search(string):
     else:
         out = False
         error = 'Key does not exist.1'
+    """
+    #return jsonify({'input':out, 'output':out, 'error': error})
+    print(test_dataset[string])
+    return jsonify(test_dataset[string])
 
-    return jsonify({'input':out, 'output':out, 'error': error})
-
-@app.route('/search/<string:string>', methods=['GET']) # search database
+@app.route('/search<string:string>', methods=['GET']) # search database
 def retrieve(string):
     r = redis.StrictRedis(host=redis_ip, port=redis_port, db=0)
     out = r.get(string)
@@ -97,6 +87,23 @@ def record():
                 error = 'Unable to update pair: Key does not exist.'
                 return jsonify({'input':data, 'output':False, 'error': error})
     return jsonify({'input':data, 'output':True, 'error': error})
+
+@app.errorhandler(404) # handles 404 errors
+def notFound(error):
+    return make_response(jsonify({'error': '404: Page not found.'}), 404)
+
+@app.route('/tasks', methods=['GET']) # displays list of available API commands
+def get_tasks():
+    return jsonify({'tasks': tasks})
+
+@app.route('/<string:taskID>', methods=['GET'])  # returns info on a specific command
+def getTask(taskID):
+    task = [task for task in tasks if task['id'] == taskID]
+    
+    if len(task) == 0:
+        abort(404)
+    
+    return jsonify({'task':task[0]})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0") 
